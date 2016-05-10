@@ -10,9 +10,19 @@ logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
 
 def PushBack(notes, args):
+
     currentDir =  os.getcwd()
+    
+    if args.pushHome:
+        if len(args.pushHome) == 1: currentDir = args.pushHome[0]
+        else: pass
+        
     fileName = currentDir+'/.bkeep'
-    date = time.strftime("%x")
+
+    if args.specify: accuracy = "%c"
+    else: accuracy = "%x"
+
+    date = time.strftime(accuracy)
 
     if args.findDate: 
         with open(fileName, "r") as f:
@@ -42,6 +52,13 @@ if __name__=='__main__':
     parser.add_argument('-f', '--findDate', 
                         help="Find dates referring to note pushed",
                         action='store_true')
+    parser.add_argument('-home', '--pushHome',
+                        help='Push note to home directory',
+                        nargs="*")
+    parser.add_argument('-s', '--specify',
+                        help='Specific time',
+                        action='store_true',
+                        default=False)
                        
     args = parser.parse_args()
     
