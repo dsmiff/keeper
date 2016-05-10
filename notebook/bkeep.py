@@ -10,7 +10,6 @@ logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
 
 def PushBack(notes, args):
-
     currentDir =  os.getcwd()
     
     if args.pushHome:
@@ -23,16 +22,14 @@ def PushBack(notes, args):
     else: accuracy = "%x"
 
     date = time.strftime(accuracy)
-
+    
     if args.findDate: 
-        with open(fileName, "r") as f:
-            contents = f.readlines()
-            f.close()
-            for i, line in enumerate(contents):
+        with open(fileName) as f:
+            for line in iter(f):
                 if notes in line:
-                    for l in contents[i:i+3]:  sys.exit("Found contents %s" %l)
+                    sys.exit("Found contents %s" %line)
                 else:
-                    sys.exit("Not found")
+                    continue
 
     try:
         with open(fileName, "a") as file:           
