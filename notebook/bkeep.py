@@ -5,19 +5,32 @@ import logging
 import os
 import sys
 import time
+from os.path import expanduser
+
+from FindBook import *
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
 
 def PushBack(notes, args):
+    rootdir = '.'
     currentDir =  os.getcwd()
+    note = '.bkeep'
+
+    if FindBook(note, currentDir):
+        fileName = FindBook(note, currentDir)
+    elif FindBook(note, expanduser('~')):
+        fileName = FindBook(note, expanduser('~'))
+        log.info('File found %s', fileName)
+    else:
+        fileName = currentDir + '/' +note
     
     if args.pushHome:
         if len(args.pushHome) == 1: currentDir = args.pushHome[0]
         else: pass
+    else:
+        pass
         
-    fileName = currentDir+'/.bkeep'
-
     if args.specify: accuracy = "%c"
     else: accuracy = "%x"
 
