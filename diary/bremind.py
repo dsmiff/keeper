@@ -5,38 +5,25 @@ import logging
 import os
 import sys
 import time
-from os.path import expanduser
-
-from FindBook import *
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
 
-def PushBack(notes, args):
-    rootdir = '.'
+def Remind(notes, args):
     currentDir =  os.getcwd()
-    note = '.bkeep'
-
-    if FindBook(note, currentDir):
-        fileName = FindBook(note, currentDir)
-    elif FindBook(note, expanduser('~')):
-        fileName = FindBook(note, expanduser('~'))
-        log.info('File found %s', fileName)
-    else:
-        fileName = currentDir + '/' +note
     
     if args.pushHome:
         if len(args.pushHome) == 1: currentDir = args.pushHome[0]
         else: pass
-    else:
-        pass
         
+    fileName = currentDir+'/.bremind'
+
     if args.specify: accuracy = "%c"
     else: accuracy = "%x"
 
     date = time.strftime(accuracy)
     
-    if args.findDate: 
+    if args.chooseDate: 
         with open(fileName) as f:
             for line in iter(f):
                 if notes in line:
@@ -59,8 +46,8 @@ if __name__=='__main__':
     parser.add_argument('-n', '--notes', 
                         help='Push back note',
                         nargs="*")
-    parser.add_argument('-f', '--findDate', 
-                        help="Find dates referring to note pushed",
+    parser.add_argument('-f', '--chooseDate', 
+                        help="Choose dates referring to note pushed",
                         action='store_true')
     parser.add_argument('-home', '--pushHome',
                         help='Push note to home directory',
@@ -68,7 +55,7 @@ if __name__=='__main__':
     parser.add_argument('-s', '--specify',
                         help='Specific time',
                         action='store_true',
-                        default=False)
+                        default=True)
                        
     args = parser.parse_args()
     
@@ -80,6 +67,6 @@ if __name__=='__main__':
         parser.print_help()
                 
     for note in args.notes:
-        PushBack(note, args)
+        Remind(note, args)
 
     sys.exit(0)
