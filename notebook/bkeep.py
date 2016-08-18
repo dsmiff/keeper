@@ -1,3 +1,4 @@
+# Dominic Smith <dosmith@cern.ch>
 #!/usr/bin/env python
 
 import argparse
@@ -9,22 +10,27 @@ from os.path import expanduser
 
 from FindBook import *
 
+##__________________________________________________||
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 log = logging.getLogger(__name__)
 
+##__________________________________________________||
 def PushBack(notes, args):
     rootdir = '.'
     currentDir =  os.getcwd()
     note = '.bkeep'
 
-    if FindBook(note, currentDir):
-        fileName = FindBook(note, currentDir)
+    bookObject = BookUtils()
+    if args.force: bookObject.touch(note)
+
+    if bookObject.FindBook(note, currentDir):
+        fileName = bookObject.FindBook(note, currentDir)
     elif FindBook(note, expanduser('~')):
-        fileName = FindBook(note, expanduser('~'))
-        log.info('File found %s', fileName)
+        fileName = bookObject.FindBook(note, expanduser('~'))
     else:
         fileName = currentDir + '/' +note
-    
+    log.info('File found %s', fileName)
+
     if args.pushHome:
         if len(args.pushHome) == 1: currentDir = args.pushHome[0]
         else: pass
@@ -53,6 +59,7 @@ def PushBack(notes, args):
         file.write(notes)
         file.close()
 
+##__________________________________________________||
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -67,6 +74,10 @@ if __name__=='__main__':
                         nargs="*")
     parser.add_argument('-s', '--specify',
                         help='Specific time',
+                        action='store_true',
+                        default=False)
+    parser.add_argument('-force', '--force',
+                        help='Create new book',
                         action='store_true',
                         default=False)
                        
